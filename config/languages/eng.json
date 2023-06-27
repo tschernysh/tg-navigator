@@ -1,0 +1,16 @@
+{
+  "start_selectLanguage": "Choose your language:",
+  "start_selectedLanguage": "You choosed english🇬🇧 language",
+  "greet_botDescription": "This bot was created in experimental goals",
+  "greet_chooseCategory": "Choose category",
+  "categories": {
+    "news": "News🗞️",
+    "cars": "Cars🚘",
+    "science": "Science🧬",
+    "games": "Games🎮",
+    "beauty": "Beauty✨",
+    "arts": "Arts🎨",
+    "technologies": "Technologies💻",
+    "literature": "Literature📚"
+  }
+}

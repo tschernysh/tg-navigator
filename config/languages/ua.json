@@ -1,0 +1,16 @@
+{
+  "start_selectLanguage": "Оберіть вашу мову:",
+  "start_selectedLanguage": "Ви обрали українську🇺🇦 мову",
+  "greet_botDescription": "Цей бот було створено в експериментальних цілях",
+  "greet_chooseCategory": "Обрати категорію",
+  "categories": {
+    "news": "Новини🗞️",
+    "cars": "Автомобілі🚘",
+    "science": "Наука🧬",
+    "games": "Ігри🎮",
+    "beauty": "Краса✨",
+    "arts": "Мистецтво🎨",
+    "technologies": "Технології💻",
+    "literature": "Література📚"
+  }
+}
