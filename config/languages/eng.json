@@ -1,4 +1,5 @@
 {
+  "language_code": "eng",
   "start_selectLanguage": "Choose your language:",
   "start_selectedLanguage": "You choosed english🇬🇧 language",
   "greet_botDescription": "This bot was created in experimental goals",
@@ -12,5 +13,6 @@
     "arts": "Arts🎨",
     "technologies": "Technologies💻",
     "literature": "Literature📚"
-  }
+  },
+  "categories_unavailable": "There's no available categories for this language. Please change the language."
 }

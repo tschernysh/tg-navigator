@@ -10,6 +10,7 @@
   "author": "tschernysh",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.4.0",
     "node-telegram-bot-api": "^0.61.0",
     "nodemon": "^2.0.22",
     "translate": "^2.0.2"

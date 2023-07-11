@@ -1,0 +1,40 @@
+{
+    "status": "ok",
+    "response": {
+        "count": 50, 
+        "total_count": 27518, 
+        "items": [ 
+            {
+                "id": 2, 
+                "date": 1540057519, 
+                "views": 3139, 
+                "shares_count": 12,
+                "comments_count": 0,
+                "reactions_count": 42,
+                "link": "t.me/orfosvinstvo/6325", 
+                "channel_id": 14069, 
+                "forwarded_from": null,  
+                "is_deleted": 0, 
+                "text": "Друзья! Я уверен, что вы ведёте свои телеграм-каналы ...",
+                "snippet": "Друзья! Я уверен, что вы ведёте свои телеграм-каналы ...", 
+                "media": {
+                    "media_type": "mediaDocument",
+                    "mime_type": "video/mp4",
+                    "size": 5085138
+                }
+            }
+        ],
+        "channels": [ 
+            {
+                "id": 14069, 
+                "link": "t.me/orfosvinstvo", 
+                "username": "tschernysh_bot_pub", 
+                "title": "Орфосвинство и идиомаркетинг", 
+                "about": "Исправляем ошибки ...", 
+                "image100": "//static.tgstat.ru/...", 
+                "image640": "//static.tgstat.ru/...", 
+                "participants_count": 9097
+            }
+        ]
+    }
+}

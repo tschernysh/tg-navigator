@@ -1,0 +1,24 @@
+{
+  "categories": [
+    {
+      "code": "tech",
+      "name": "Технологии"
+    },
+    {
+      "code": "news",
+      "name": "Новости и СМИ"
+    },
+    {
+      "code": "education",
+      "name": "Образование"
+    },
+    {
+      "code": "business",
+      "name": "Бизнес и стартапы"
+    },
+    {
+      "code": "crypto",
+      "name": "Криптовалюты"
+    },
+  ]
+}
