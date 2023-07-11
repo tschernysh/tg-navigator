@@ -101,7 +101,7 @@ bot.on('callback_query', async (query) => {
       selectedLanguage = English
       bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
 
-      bot.sendPhoto(chatId, greetPicture)
+      bot.sendPhoto(chatId, greetPicture, { caption: selectedLanguage.greet_botDescription })
         .then(() => {
           console.log('Картинка успішно відправлена');
           const options = {
@@ -111,7 +111,7 @@ bot.on('callback_query', async (query) => {
               ]
             })
           }
-          bot.sendMessage(chatId, selectedLanguage.greet_botDescription, options)
+          bot.sendMessage(chatId, selectedLanguage.greet_menu, options)
         })
         .catch((error) => {
           console.error('Помилка під час відправлення картинки:', error);
@@ -122,7 +122,7 @@ bot.on('callback_query', async (query) => {
       selectedLanguage = Ukrainian
       bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
 
-      bot.sendPhoto(chatId, greetPicture)
+      bot.sendPhoto(chatId, greetPicture, { caption: selectedLanguage.greet_botDescription })
         .then(() => {
           console.log('Картинка успішно відправлена');
           const options = {
@@ -132,7 +132,7 @@ bot.on('callback_query', async (query) => {
               ]
             })
           }
-          bot.sendMessage(chatId, selectedLanguage.greet_botDescription, options)
+          bot.sendMessage(chatId, selectedLanguage.greet_menu, options)
         })
         .catch((error) => {
           console.error('Помилка під час відправлення картинки:', error);
@@ -237,7 +237,7 @@ const sendFeedPost = async (chatId, category) => {
         [{ text: '⬅️', callback_data: `chooseCategory` },
         { text: '👍', callback_data: `like` },
         { text: '👎', callback_data: `dislike` },
-        { text: '📢', callback_data: `redirect` }
+        { text: '🔗', callback_data: `redirect` }
         ],
       ],
     })

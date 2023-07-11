@@ -2,6 +2,7 @@
   "language_code": "eng",
   "start_selectLanguage": "Choose your language:",
   "start_selectedLanguage": "You choosed english🇬🇧 language",
+  "greet_menu": "Menu:",
   "greet_botDescription": "This bot was created in experimental goals",
   "greet_chooseCategory": "Choose category",
   "categories": {
