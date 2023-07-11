@@ -9,7 +9,7 @@ const { getCategories, getPosts, getChannels } = require('./api/api');
 const { formChooseCategory } = require('./utils/formChooseCategory');
 const { getPhoto } = require('./utils/getPhoto');
 
-const bot = new TelegramBot(Config().TG_BOT_TOKEN, { polling: true })
+const bot = new TelegramBot(Config().NAVIGATOR_TOKEN, { polling: true })
 let categoryPage = 0
 let currentCategoryChooseMsgId = 0
 let selectedLanguage = Ukrainian
