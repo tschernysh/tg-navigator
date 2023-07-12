@@ -5,6 +5,7 @@ const Ukrainian = require('./config/languages/ua.json');
 const Categories = require('./config/categories.json')
 const PostExample = require('./config/postExample.json')
 const ActiveChannels = require('./config/activeChannelsList.json')
+const NeedSubscribeChannels = require("./config/needSubscribeChannels.json")
 const { getCategories, getPosts, getChannels } = require('./api/api');
 const { formChooseCategory } = require('./utils/formChooseCategory');
 const { getPhoto } = require('./utils/getPhoto');
@@ -14,6 +15,7 @@ let categoryPage = 0
 let currentCategoryChooseMsgId = 0
 let selectedLanguage = Ukrainian
 let currentCategory = ''
+let userNeedToSubscribe = false
 
 let currentRedirectLink = ''
 
@@ -39,48 +41,40 @@ const chooseUserLanguage = (msg) => {
       console.error('Помилка під час відправлення повідомлення:', error);
     });
 }
-/* bot.on('callback_query', (query) => {
-  const chatId = query.message.chat.id;
-  const data = query.data;
-
-  // Виконайте відповідні дії в залежності від значення data
-  if (data === 'language_eng') {
-    selectedLanguage = English
-    bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
-  } else if (data === 'language_ua') {
-    selectedLanguage = Ukrainian
-    bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
-  }
-  const greetPicture = 'assets/musashi.jpeg'; // Шлях до файлу зображення
-  bot.sendPhoto(chatId, greetPicture)
-    .then(() => {
-      console.log('Картинка успішно відправлена');
-      const options = {
-        reply_markup: JSON.stringify({
-          inline_keyboard: [
-            [{ text: selectedLanguage.greet_chooseCategory, callback_data: 'chooseCategory' }],
-          ]
-        })
-      }
-      bot.sendMessage(chatId, selectedLanguage.greet_botDescription, options)
-    })
-    .catch((error) => {
-      console.error('Помилка під час відправлення картинки:', error);
-    });
-  // Відправте відповідь на callback_query для позначення обробленої події
-  bot.answerCallbackQuery(query.id);
-});
-}
-*/
-
 bot.on('callback_query', async (query) => {
 
   const chatId = query.message.chat.id;
   const chatUsername = '@' + query.message.chat.username
   const data = query.data;
   const greetPicture = 'assets/tgnavigator.jpg'; // Шлях до файлу зображення
-  console.log(data)
+  console.log(query)
   switch (data) {
+    case 'checkChannels':
+      const subscribeChannelsList = NeedSubscribeChannels.channels
+
+      let accessDenied = false
+
+      let currentUserSubscribed
+      console.log('data to check: ', subscribeChannelsList[2].channelId, query.from.id)
+      try {
+        currentUserSubscribed = await bot.getChatMember(subscribeChannelsList[2].channelId, query.from.id)
+      } catch (error) {
+        console.log(error.message)
+      }
+      console.log('currentUserSubscribed: ', currentUserSubscribed)
+      if (!currentUserSubscribed || currentUserSubscribed.status === 'left' || currentUserSubscribed.status === 'kicked') {
+        accessDenied = true
+        break
+      }
+      console.log('access denied', accessDenied)
+      if (accessDenied) {
+        sendChannelsToSubscribe(chatId)
+      } else {
+        sendGreetingMenu(chatId, greetPicture)
+      }
+
+
+      break
     case 'chooseCategory':
 
       const options = {
@@ -122,22 +116,11 @@ bot.on('callback_query', async (query) => {
       selectedLanguage = Ukrainian
       bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
 
-      bot.sendPhoto(chatId, greetPicture, { caption: selectedLanguage.greet_botDescription })
-        .then(() => {
-          console.log('Картинка успішно відправлена');
-          const options = {
-            reply_markup: JSON.stringify({
-              inline_keyboard: [
-                [{ text: selectedLanguage.greet_chooseCategory, callback_data: 'chooseCategory' }],
-              ]
-            })
-          }
-          bot.sendMessage(chatId, selectedLanguage.greet_menu, options)
-        })
-        .catch((error) => {
-          console.error('Помилка під час відправлення картинки:', error);
-        });
-      // Відправте відповідь на callback_query для позначення обробленої події
+      if (userNeedToSubscribe) {
+        sendChannelsToSubscribe(chatId)
+      } else {
+        sendGreetingMenu(chatId, greetPicture)
+      }
       break
     case 'categoryNext':
 
@@ -255,7 +238,47 @@ const sendFeedPost = async (chatId, category) => {
   currentCategory = category
 }
 
+const sendGreetingMenu = (chatId, greetPicture) => {
+  bot.sendPhoto(chatId, greetPicture, { caption: selectedLanguage.greet_botDescription })
+    .then(() => {
+      console.log('Картинка успішно відправлена');
+      const options = {
+        reply_markup: JSON.stringify({
+          inline_keyboard: [
+            [{ text: selectedLanguage.greet_chooseCategory, callback_data: 'chooseCategory' }],
+          ]
+        })
+      }
+      bot.sendMessage(chatId, selectedLanguage.greet_menu, options)
+    })
+    .catch((error) => {
+      console.error('Помилка під час відправлення картинки:', error);
+    });
+}
+
+const sendChannelsToSubscribe = (chatId) => {
+
+  const listOfChannels = NeedSubscribeChannels.channels.map((el, index) => (index + 1 + ': ' + el.link)).join("\n")
+
+  const textToSubscribe = `${selectedLanguage.greet_needSubscribe}
+
+${listOfChannels}`
+
+  const subscribeOptions = {
+    reply_markup: JSON.stringify({
+      inline_keyboard: [
+        [{ text: selectedLanguage.greet_continue, callback_data: 'checkChannels' }],
+      ]
+    })
+  }
+
+  bot.sendMessage(chatId, textToSubscribe, subscribeOptions);
+
+
+}
+
 bot.onText(/\/start/, (msg) => {
+  userNeedToSubscribe = true
   chooseUserLanguage(msg)
 });
 
