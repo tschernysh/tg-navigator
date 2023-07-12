@@ -114,7 +114,7 @@ bot.on('callback_query', async (query) => {
     // Відправте відповідь на callback_query для позначення обробленої події
     case 'language_ua':
       selectedLanguage = Ukrainian
-      bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
+      await bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
 
       if (userNeedToSubscribe) {
         sendChannelsToSubscribe(chatId)
