@@ -9,8 +9,9 @@ const NeedSubscribeChannels = require("./config/needSubscribeChannels.json")
 const { getCategories, getPosts, getChannels } = require('./api/api');
 const { formChooseCategory } = require('./utils/formChooseCategory');
 const { getPhoto } = require('./utils/getPhoto');
+const { formKeyboardButtons } = require('./utils/formKeyboardButtons');
 
-const bot = new TelegramBot(Config().NAVIGATOR_TOKEN, { polling: true })
+const bot = new TelegramBot(Config().TG_BOT_TOKEN, { polling: true })
 let categoryPage = 0
 let currentCategoryChooseMsgId = 0
 let selectedLanguage = Ukrainian
@@ -20,10 +21,10 @@ let userNeedToSubscribe = false
 let currentRedirectLink = ''
 
 
-const chooseUserLanguage = (msg) => {
-  console.log('MESSAGE DATA', msg)
-  const chatId = msg.chat.id;
-  bot.deleteMessage(chatId, msg.message_id)
+const chooseUserLanguage = (chatId, msgId = null) => {
+  if (!!msgId) {
+    bot.deleteMessage(chatId, msgId)
+  }
   let botMessageId
   //{ text: 'English🇬🇧', callback_data: 'language_eng' }, 
   const options = {
@@ -75,14 +76,20 @@ bot.on('callback_query', async (query) => {
 
 
       break
+    case 'menu':
+      sendMenu(chatId)
+      break
+    case 'changeLanguage':
+      chooseUserLanguage(chatId)
+      break
     case 'chooseCategory':
 
       const options = {
         reply_markup: JSON.stringify({
-          inline_keyboard: formChooseCategory(selectedLanguage.language_code, categoryPage)
+          inline_keyboard: formChooseCategory(selectedLanguage, categoryPage)
         })
       }
-      bot.sendMessage(chatId, selectedLanguage.greet_chooseCategory, options)
+      bot.sendMessage(chatId, selectedLanguage.menu_buttons.filter(el => el.code === data)[0].name, options)
         .then((sentMessage) => {
           currentCategoryChooseMsgId = sentMessage.message_id;
           console.log(sentMessage.message_id)
@@ -116,17 +123,13 @@ bot.on('callback_query', async (query) => {
       selectedLanguage = Ukrainian
       await bot.sendMessage(chatId, selectedLanguage.start_selectedLanguage);
 
-      if (userNeedToSubscribe) {
-        sendChannelsToSubscribe(chatId)
-      } else {
-        sendGreetingMenu(chatId, greetPicture)
-      }
+      sendGreetingMenu(chatId, greetPicture)
       break
     case 'categoryNext':
 
       const nextOptions = {
         reply_markup: {
-          inline_keyboard: formChooseCategory(categoryPage + 1)
+          inline_keyboard: formChooseCategory(selectedLanguage, categoryPage + 1)
         }
       }
       console.log(nextOptions)
@@ -144,7 +147,7 @@ bot.on('callback_query', async (query) => {
 
       const prevOptions = {
         reply_markup: {
-          inline_keyboard: formChooseCategory(categoryPage - 1)
+          inline_keyboard: formChooseCategory(selectedLanguage, categoryPage - 1)
         }
       }
       bot.editMessageText(selectedLanguage.greet_chooseCategory, { chat_id: chatId, message_id: currentCategoryChooseMsgId, ...prevOptions })
@@ -172,7 +175,7 @@ bot.on('callback_query', async (query) => {
       break
     case 'redirect':
       console.log(currentRedirectLink)
-      bot.sendMessage(chatId, currentRedirectLink, { reply_to_message_id: query.message.message_id });
+      bot.sendMessage(chatId, currentRedirectLink, { reply_to_message_id: query.message.message_id, disable_web_page_preview: true });
 
   }
 
@@ -234,26 +237,36 @@ const sendFeedPost = async (chatId, category) => {
       sendFeedPost(chatId, category)
       console.log('copy error', error.message)
     })
+  console.log(currentChannelId)
   currentRedirectLink = Config().TELEGRAM_BASE_URL + currentChannelId.replace('@', '') + '/' + messageIdToSend
   currentCategory = category
 }
 
-const sendGreetingMenu = (chatId, greetPicture) => {
-  bot.sendPhoto(chatId, greetPicture, { caption: selectedLanguage.greet_botDescription })
+const sendGreetingMenu = async (chatId, greetPicture) => {
+  await bot.sendPhoto(chatId, greetPicture, { caption: selectedLanguage.greet_botDescription })
     .then(() => {
       console.log('Картинка успішно відправлена');
-      const options = {
-        reply_markup: JSON.stringify({
-          inline_keyboard: [
-            [{ text: selectedLanguage.greet_chooseCategory, callback_data: 'chooseCategory' }],
-          ]
-        })
-      }
-      bot.sendMessage(chatId, selectedLanguage.greet_menu, options)
+      sendMenu(chatId)
     })
     .catch((error) => {
       console.error('Помилка під час відправлення картинки:', error);
     });
+}
+
+const sendMenu = (chatId) => {
+
+
+  const menuList = selectedLanguage.menu_buttons
+
+  const menuKeyboardList = formKeyboardButtons(menuList, 0)
+
+  console.log(menuKeyboardList)
+  const options = {
+    reply_markup: JSON.stringify({
+      inline_keyboard: menuKeyboardList
+    })
+  }
+  bot.sendMessage(chatId, selectedLanguage.greet_menu, options)
 }
 
 const sendChannelsToSubscribe = (chatId) => {
@@ -268,7 +281,8 @@ ${listOfChannels}`
     reply_markup: JSON.stringify({
       inline_keyboard: [
         [{ text: selectedLanguage.greet_continue, callback_data: 'checkChannels' }],
-      ]
+      ],
+      disable_web_page_preview: true
     })
   }
 
@@ -279,10 +293,10 @@ ${listOfChannels}`
 
 bot.onText(/\/start/, (msg) => {
   userNeedToSubscribe = true
-  chooseUserLanguage(msg)
+  chooseUserLanguage(msg.chat.id, msg.message_id)
 });
 
 bot.onText(/\/language/, (msg) => {
-  chooseUserLanguage(msg)
+  chooseUserLanguage(msg.chat.id, msg.message_id)
 });
 

@@ -5,8 +5,11 @@
   "greet_menu": "Menu:",
   "greet_needSubscribe": "Для отримання доступу до сервісу підпишіться на наші телеграм канали, щоб вчасно отримувати корисну інформацію:",
   "greet_botDescription": "This bot was created in experimental goals",
-  "greet_chooseCategory": "Choose category",
   "greet_continue": "Continue",
+  "menu_buttons": [
+    "Choose category",
+    "Change language"
+  ],
   "categories": {
     "news": "News🗞️",
     "cars": "Cars🚘",

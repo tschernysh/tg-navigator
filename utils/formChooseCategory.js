@@ -1,31 +1,18 @@
 const Categories = require('../config/categories.json')
 const ActiveChannels = require('../config/activeChannelsList.json')
 const { Config } = require('../config')
+const { formKeyboardButtons } = require('./formKeyboardButtons')
 
 const formChooseCategory = (currentLanguage, categoryPage) => {
 
-  console.log(currentLanguage)
-  const availableCategoriesList = Object.keys(ActiveChannels.language[currentLanguage].categories)
+  console.log(currentLanguage.language_code)
+  const availableCategoriesList = Object.keys(ActiveChannels.language[currentLanguage.language_code].categories)
   const categoriesFullNameList = Categories.categories
 
   const categoriesList = categoriesFullNameList.filter(el => availableCategoriesList.includes(el.code))
   console.log(categoriesList)
 
-  const tableCells = Math.ceil(categoriesList.length / Config().CATEGORY_COLUMN_COUNT / Config().CATEGORY_ROW_COUNT)
-  const tableSize = (Config().CATEGORY_COLUMN_COUNT * Config().CATEGORY_ROW_COUNT)
-  const keyboardCategoryList = []
-
-  for (let i = 0; i < Config().CATEGORY_ROW_COUNT; i++) {
-    keyboardCategoryList.push([])
-    for (let j = 0; j < Config().CATEGORY_COLUMN_COUNT; j++) {
-      const currentElement = i * Config().CATEGORY_COLUMN_COUNT + (categoryPage * tableSize) + j
-      if (!categoriesList[currentElement]) break
-      keyboardCategoryList[i].push({
-        text: categoriesList[currentElement].name,
-        callback_data: categoriesList[currentElement].code
-      })
-    }
-  }
+  const keyboardCategoryList = formKeyboardButtons(categoriesList, categoryPage)
 
   if (keyboardCategoryList.length >= keyboardCategoryList) {
 
@@ -65,6 +52,7 @@ const formChooseCategory = (currentLanguage, categoryPage) => {
       })
     }
   }
+  keyboardCategoryList.unshift([{ text: currentLanguage.greet_menu, callback_data: 'menu' }])
   console.log(keyboardCategoryList)
   return keyboardCategoryList
 }
