@@ -11,7 +11,7 @@ const { formChooseCategory } = require('./utils/formChooseCategory');
 const { getPhoto } = require('./utils/getPhoto');
 const { formKeyboardButtons } = require('./utils/formKeyboardButtons');
 
-const bot = new TelegramBot(Config().TG_BOT_TOKEN, { polling: true })
+const bot = new TelegramBot(Config().NAVIGATOR_TOKEN, { polling: true })
 let categoryPage = 0
 let currentCategoryChooseMsgId = 0
 let selectedLanguage = Ukrainian
